@@ -75,17 +75,21 @@ def show():
 
 
 @certificates_subcommands.command
-def send():
+@manager.option('-i', '--id', dest='send_again_id')
+@manager.option('-e', '--email', dest='send_again_mail', default=None)
+def send(send_again_id, send_again_mail):
     "Send existing certificate again"
-    print("Which existing certificate do you want to send again? Type the ID")
-    send_again_id = input('>')
-    print("Where should it be sent? Please type the Email")
-    send_again_mail = input('>')
-    try:
-        mail_certificate(send_again_id, send_again_mail)
-        print("OK")
-    except:
-        print("That didn't work.")
+    for request in Request.query.filter(Request.generation_date != None).all():  # noqa
+        if request.id == send_again_id:
+            print("ID found. Try to mail certificate again...")
+            if send_again_mail is None:
+                send_again_mail = request.email
+            try:
+                mail_certificate(send_again_id, send_again_mail)
+                print("OK")
+            except:
+                print("Sorry, something went wrong.")
+            return
 
 
 @certificates_subcommands.command
