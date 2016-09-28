@@ -11,7 +11,7 @@ Today we use a webinterface for user input that lives at
 provides us with an id and e-mail and generates a certificate request in the
 database. After the generation of the request an admin has to execute
 `python3 manage.py requests process` on the server to create the certificate and send it to the
-user. To send an already existing certificate again use `python3 manage.py certificates send --id=ID [--email=EMAIL]`.
+user. To send an already existing certificate again use `python3 manage.py certificates send [-e EMAIL] ID`.
 
 See also: `python3 manage.py requests --help` and: `python3 manage.py certificates --help`
 
