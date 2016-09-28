@@ -75,7 +75,6 @@ def show():
 
 
 @certificates_subcommands.command
-@manager.command
 def send(id, email=None):
     "Send existing certificate again"
     for request in Request.query.filter(Request.generation_date != None).all():  # noqa
