@@ -83,6 +83,7 @@ def send(id, email=None):
             print("ID found.")
             if email is None:
                 email = request.email
+                print("Set EMAIL to emailaddress used for former request.")
             mail_certificate(id, email)
             return
 
