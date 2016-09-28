@@ -75,17 +75,16 @@ def show():
 
 
 @certificates_subcommands.command
-@manager.option('-i', '--id', dest='send_again_id')
-@manager.option('-e', '--email', dest='send_again_mail', default=None)
-def send(send_again_id, send_again_mail):
+@manager.command
+def send(id, email=None):
     "Send existing certificate again"
     for request in Request.query.filter(Request.generation_date != None).all():  # noqa
-        if request.id == send_again_id:
+        if request.id == id:
             print("ID found. Try to mail certificate again...")
-            if send_again_mail is None:
-                send_again_mail = request.email
+            if email is None:
+                email = request.email
             try:
-                mail_certificate(send_again_id, send_again_mail)
+                mail_certificate(id, email)
                 print("OK")
             except:
                 print("Sorry, something went wrong.")
