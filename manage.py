@@ -34,17 +34,27 @@ def mail_certificate(id, email):
                 recipients=[email]
                 )
         msg.body = render_template('mail.txt')
-        certificate_path = "{}/freifunk_{}.tgz".format(
-                app.config['DIRECTORY_CLIENTS'],
-                id
-                )
-        with app.open_resource(certificate_path) as fp:
-            msg.attach(
-                    "freifunk_{}.tgz".format(id),
-                    "application/gzip",
-                    fp.read()
+        print("Looking for archive to attach...")
+        try:
+            certificate_path = "{}/freifunk_{}.tgz".format(
+                    app.config['DIRECTORY_CLIENTS'],
+                    id
                     )
-        mail.send(msg)
+            with app.open_resource(certificate_path) as fp:
+                msg.attach(
+                        "freifunk_{}.tgz".format(id),
+                        "application/gzip",
+                        fp.read()
+                        )
+        except:
+            print("Sorry, that didn't work.")
+            return
+        print("Send the email...")
+        try:
+            mail.send(msg)
+            print("OK.")
+        except:
+            print("Sorry, that didn't work.")
 
 
 @requests_subcommands.command
@@ -56,14 +66,14 @@ def process():
         print("Type y to continue")
         confirm = input('>')
         if confirm in ['Y', 'y']:
-            print('generating certificate')
+            print('Generating certificate')
             call([app.config['COMMAND_BUILD'], request.id, request.email])
             mail_certificate(request.id, request.email)
             request.generation_date = datetime.date.today()
             db.session.commit()
             print()
         else:
-            print('skipping generation \n')
+            print('Skipping generation \n')
 
 
 @requests_subcommands.command
