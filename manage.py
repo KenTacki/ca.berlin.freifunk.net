@@ -80,14 +80,10 @@ def send(id, email=None):
     "Send existing certificate again"
     for request in Request.query.filter(Request.generation_date != None).all():  # noqa
         if request.id == id:
-            print("ID found. Try to mail certificate again...")
+            print("ID found.")
             if email is None:
                 email = request.email
-            try:
-                mail_certificate(id, email)
-                print("OK")
-            except:
-                print("Sorry, something went wrong.")
+            mail_certificate(id, email)
             return
 
 
