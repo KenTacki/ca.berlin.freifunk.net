@@ -34,7 +34,7 @@ def mail_certificate(id, email):
                 recipients=[email]
                 )
         msg.body = render_template('mail.txt')
-        print("Looking for archive to attach...")
+        print("Looking for archive with certificate to attach...")
         try:
             certificate_path = "{}/freifunk_{}.tgz".format(
                     app.config['DIRECTORY_CLIENTS'],
@@ -47,14 +47,14 @@ def mail_certificate(id, email):
                         fp.read()
                         )
         except:
-            print("Sorry, that didn't work.")
+            print("Sorry, couldn't find archive file in expected directory.")
             return
         print("Send the email...")
         try:
             mail.send(msg)
             print("OK.")
         except:
-            print("Sorry, that didn't work.")
+            print("Sorry, couldn't sent Email.")
 
 
 @requests_subcommands.command
@@ -68,6 +68,7 @@ def process():
         if confirm in ['Y', 'y']:
             print('Generating certificate')
             call([app.config['COMMAND_BUILD'], request.id, request.email])
+            print("Ready. Trying to send email...")
             mail_certificate(request.id, request.email)
             request.generation_date = datetime.date.today()
             db.session.commit()
