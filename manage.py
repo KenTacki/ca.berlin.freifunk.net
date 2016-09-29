@@ -87,14 +87,15 @@ def show():
 @certificates_subcommands.command
 def send(id, email=None):
     "Send existing certificate again"
-    for request in Request.query.filter(Request.generation_date != None).all():  # noqa
-        if request.id == id:
-            print("ID found.")
-            if email is None:
-                email = request.email
-                print("Set EMAIL to emailaddress used for former request.")
-            mail_certificate(id, email)
-            return
+    request = Request.query.filter(Request.id == id).first()
+    if request is None:
+        print("Sorry. ID not found.")
+        return
+    print("ID found. Trying to send email...")
+    if email is None:
+        email = request.email
+        print("Set EMAIL to emailaddress used for former request.")
+    mail_certificate(id, email)
 
 
 @certificates_subcommands.command
